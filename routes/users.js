@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const User = require('../models/user');
 const Question= require('../models/question');
+const Answer= require('../models/answer');
 
 //Register
 router.post('/register', function(req, res, next){
@@ -86,7 +87,7 @@ router.post('/ask', function(req, res, next){
         author:req.body.author,
         //slug: pass
     });
-
+    console.log(newQuestion.author);
     Question.addQuestion(newQuestion, function(err, question){
         if(err){
             res.json({success: false, msg: 'Failed to post Question' });
@@ -99,15 +100,118 @@ router.post('/ask', function(req, res, next){
 });
 
 //Fetch Questions
-/*
 router.get('/fetch', function(req, res){
-    Question.fetchQuestion("How many suits did ironman build?",function(err){
+    let query="How many suits did ironman build?";
+   /* Question.fetchQuestions(function(err, question){
         if(err){
-            res.json({success: false, msg: 'Failed to post Question' });
+            res.json({success: false, msg: 'Answer could not be retrieved' });
         }
         else{
-            res.json({success: true, msg: 'Question posted successfully' });
+            console.log(question);
+            res.json({success: true, msg: 'Answer retrieved successfully' });
+        }
+    });
+    */
+    Question.find( function(err, docs){
+        console.log("Getting data from db");
+
+        if (err) {
+          console.log('error from mongodb', err);
+          res.send('error retrieving data')
+          
+        } else {
+          console.log('docs from mongodb', docs);
+          res.json(docs);
+          console.log("Returned data");
+        }
+    })
+});
+
+
+
+//Answer Question
+router.post('/answer', function(req, res, next){
+    let newAnswer = new Answer({
+        questionid: req.body.questionid,
+        answer:req.body.answer,
+        answerer:req.body.answerer
+       
+    });
+ console.log(newAnswer.questionid, newAnswer.answer, newAnswer.answerer);
+    Answer.addAnswer(newAnswer, function(err, answer){
+        if(err){
+            res.json({success: false, msg: 'Failed to post Answer' });
+        }
+        else{
+            res.json({success: true, msg: 'Answer posted successfully' });
+        }
+    });
+
+});
+
+//Fetch Answers
+router.get('/answer', function(req, res){
+    let query="How many suits did ironman build?";
+   /* Question.fetchQuestions(function(err, question){
+        if(err){
+            res.json({success: false, msg: 'Answer could not be retrieved' });
+        }
+        else{
+            console.log(question);
+            res.json({success: true, msg: 'Answer retrieved successfully' });
+        }
+    });
+    */
+    Answer.find( function(err, docs){
+        console.log("Getting data from db");
+
+        if (err) {
+          console.log('error from mongodb', err);
+          res.send('error retrieving data')
+          
+        } else {
+          console.log('docs from mongodb', docs);
+          res.json(docs);
+          console.log("Returned data");
+        }
+    })
+});
+
+//GET QUESTION BY ID
+router.get('/retrieveQuestionById/:id', function(req, res){
+    let query={ _id:req.params['id'] };
+    console.log(query);
+    Question.findOne(query, function(err, docs){
+        console.log("Getting data from db");
+
+        if (err) {
+          console.log('error from mongodb', err);
+          res.send('error retrieving data')
+          
+        } else {
+          console.log('docs from mongodb', docs);
+          res.json(docs);
+          console.log("Returned data");
         }
     });
 });
-*/
+
+
+//GET ANSWERS BY QUESTION ID
+router.get('/retrieveAnswerById/:id', function(req, res){
+    let query={ questionid:req.params['id'] };
+    console.log(query);
+    Answer.find(query, function(err, docs){
+        console.log("Getting data from db");
+
+        if (err) {
+          console.log('error from mongodb', err);
+          res.send('error retrieving data')
+          
+        } else {
+          console.log('docs from mongodb', docs);
+          res.json(docs);
+          console.log("Returned data");
+        }
+    });
+});

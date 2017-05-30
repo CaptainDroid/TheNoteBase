@@ -1,32 +1,32 @@
 const mongoose= require('mongoose');
 const config = require('../config/database');
 
-//Question Schema
+//Answer Schema
 
-const QuestionSchema= mongoose.Schema({
-    question:{
+const AnswerSchema= mongoose.Schema({
+    questionid:{
         type: String,
-        required:true
+        required:false
     },
-    author:{
+    answer:{
         type: Object,
-        required: true
+        required: false
     },
-    slug:{
-        type:String,
+    answerer:{
+        type:Object,
         required:false
     } 
 });
 
-const Question = module.exports= mongoose.model('Question', QuestionSchema);
+const Answer = module.exports= mongoose.model('Answer', AnswerSchema);
 
-module.exports.addQuestion = function(newQuestion, callback){
-    newQuestion.save(callback);
+module.exports.addAnswer = function(newAnswer, callback){
+    newAnswer.save(callback);
 };
 
-module.exports.fetchQuestions = function(callback){
+module.exports.fetchAnswer = function(callback){
    // let queryString={question : query};
-    Question.find(//callbackfunction(err, docs){
+    Answer.find(//callbackfunction(err, docs){
         /*console.log("Getting data from db");
         if (err) {
           console.log('error from mongodb', err);
